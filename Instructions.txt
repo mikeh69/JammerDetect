@@ -1,0 +1,41 @@
+Based on installing into the June 2017 version of Raspbian Jessie Lite.  Your Raspberry Pi will need an Internet connection! 
+
+
+
+Build and install PortAudio and its Python bindings:
+
+sudo apt-get install libasound-dev
+wget http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz
+tar -xvf pa_stable_v190600_20161030.tgz
+cd portaudio
+./configure
+make
+sudo make install
+sudo ldconfig
+sudo pip3 install pyaudio pyserial pynmea
+
+cd pyrtlsdr  (our customised version, to go with our customised librtlsdr)
+sudo pip3 install --upgrade wheel pip
+sudo python3 setup.py install
+
+sudo rm /usr/lib/librtlsdr.*  (our custom version installs to /usr/local/lib)
+sudo ldconfig
+
+
+To auto-run the program:
+
+sudo crontab -e, then Enter to select nano editor,
+Add a final line to the file: @reboot /usr/bin/python3 /home/pi/jammer_det/jammer_detect_no_ui.py
+
+
+To make the Raspberry Pi perform an orderly shutdown when the RTLSDR dongle is unplugged:
+
+(udevadm monitor --env) - shows what environment-vars are available when the device is unplugged
+
+Create a new file /etc/udev/rules.d/88-rtlsdr_unplug.rules ("sudo nano /etc/udev/rules.d/88-rtlsdr_unplug.rules"), containing:
+
+ACTION=="remove", SUBSYSTEM=="usb", ENV{ID_VENDOR_ID}=="0bda", ENV{ID_MODEL_ID}=="2838", RUN+="/sbin/poweroff"
+ACTION=="remove", SUBSYSTEM=="usb", ENV{ID_VENDOR_ID}=="0bda", ENV{ID_MODEL_ID}=="2832", RUN+="/sbin/poweroff"
+
+Ctrl-X, Y to save and exit the editor, then sudo reboot
+
