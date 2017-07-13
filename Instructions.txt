@@ -22,7 +22,7 @@ sudo rm /usr/lib/librtlsdr.*  (our custom version installs to /usr/local/lib)
 sudo ldconfig
 
 
-To auto-run the program:
+To auto-run the program when the Pi powers up:
 
 sudo crontab -e, then Enter to select nano editor,
 Add a final line to the file: @reboot /usr/bin/python3 /home/pi/jammer_det/jammer_detect_no_ui.py
